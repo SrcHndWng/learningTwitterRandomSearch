@@ -27,5 +27,9 @@ public class Application {
 		System.out.println("Application Run!");
 		System.out.println(String.format("%s %s!", greeting, framework));
 		twitter.receive();
+
+		// while(true){
+		// 	System.out.println("loop");
+		// }
 	}
 }
