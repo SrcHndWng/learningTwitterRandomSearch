@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import twitter4j.TwitterException;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TwitterTests {
@@ -15,7 +17,7 @@ public class TwitterTests {
 	private Twitter twitter;
 
 	@Test
-	public void testReceive() {
+	public void testReceive() throws TwitterException {
 		twitter.receive();
 		assertEquals(true, true);
 	}

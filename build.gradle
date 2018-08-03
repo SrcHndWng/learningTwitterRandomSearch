@@ -27,5 +27,6 @@ repositories {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
+	compile('org.twitter4j:twitter4j-core:4.0.6')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
