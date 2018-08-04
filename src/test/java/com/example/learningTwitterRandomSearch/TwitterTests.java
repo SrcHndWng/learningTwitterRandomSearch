@@ -18,7 +18,9 @@ public class TwitterTests {
 
 	@Test
 	public void testReceive() throws TwitterException, InterruptedException {
+		twitter.initialize();
 		twitter.receive();
+		twitter.stop();
 		assertEquals(true, true);
 	}
 

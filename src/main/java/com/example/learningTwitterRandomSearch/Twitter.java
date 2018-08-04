@@ -8,6 +8,7 @@ import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.TwitterException;
+import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.*;
 
@@ -19,18 +20,23 @@ public class Twitter {
     final String TWITTER_ACCESS_TOKEN_SECRET = System.getenv("TWITTER_ACCESS_TOKEN_SECRET");
     final String TWITTER_ACCOUNT = System.getenv("TWITTER_ACCOUNT");
 
+    TwitterStream twitterStream;
+
     public Twitter(){
     }
 
-    public void receive() throws TwitterException, InterruptedException{
-        System.out.println("-----receive start-----");
+    public void initialize(){
         var cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
             .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
             .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
             .setOAuthAccessToken(TWITTER_ACCESS_TOKEN)
             .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET);
-        var twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+        twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+    }
+
+    public void receive() throws TwitterException, InterruptedException{
+        System.out.println("-----receive start-----");
         var listener = new StatusListener() {
             @Override
             public void onStatus(Status status) {
@@ -67,8 +73,10 @@ public class Twitter {
         filterQuery.track(new String[] {String.format("@%s", TWITTER_ACCOUNT)});
         twitterStream.filter(filterQuery);
         System.out.println("waiting...");
-        Thread.sleep(300 * 1000L);
+        Thread.sleep(120 * 1000L);
+    }
+
+    public void stop(){
         twitterStream.shutdown();
-        System.out.println("-----receive end-----");
     }
 }
