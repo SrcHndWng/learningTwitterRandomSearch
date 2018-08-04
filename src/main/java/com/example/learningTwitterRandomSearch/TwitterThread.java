@@ -1,31 +1,25 @@
 package com.example.learningTwitterRandomSearch;
 
-import org.springframework.stereotype.Component;
-
 import twitter4j.FilterQuery;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
-import twitter4j.TwitterException;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.*;
 
-@Component
-public class Twitter {
+public class TwitterThread extends Thread{
     final String TWITTER_CONSUMER_KEY = System.getenv("TWITTER_CONSUMER_KEY");
     final String TWITTER_CONSUMER_SECRET = System.getenv("TWITTER_CONSUMER_SECRET");
     final String TWITTER_ACCESS_TOKEN = System.getenv("TWITTER_ACCESS_TOKEN");
     final String TWITTER_ACCESS_TOKEN_SECRET = System.getenv("TWITTER_ACCESS_TOKEN_SECRET");
     final String TWITTER_ACCOUNT = System.getenv("TWITTER_ACCOUNT");
 
-    TwitterStream twitterStream;
+    private TwitterStream twitterStream;
+    private boolean isActive = true;
 
-    public Twitter(){
-    }
-
-    public void initialize(){
+    public TwitterThread(){
         var cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
             .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
@@ -34,8 +28,9 @@ public class Twitter {
             .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET);
         twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
     }
-
-    public void receive() throws TwitterException, InterruptedException{
+    
+    @Override
+	public void run(){
         System.out.println("-----receive start-----");
         var listener = new StatusListener() {
             @Override
@@ -72,11 +67,16 @@ public class Twitter {
         var filterQuery = new FilterQuery();
         filterQuery.track(new String[] {String.format("@%s", TWITTER_ACCOUNT)});
         twitterStream.filter(filterQuery);
-        System.out.println("waiting...");
-        Thread.sleep(120 * 1000L);
-    }
 
-    public void stop(){
+        System.out.println("-----waiting-----");
+        while(this.isActive) {
+            // waiting...
+        }
+    }
+    
+    public void stopThread() {
+        System.out.println("-----receive stop-----");
+        this.isActive = false;
         twitterStream.shutdown();
     }
 }

@@ -4,23 +4,28 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import twitter4j.TwitterException;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class TwitterTests {
-	@Autowired
-	private Twitter twitter;
-
+public class TwitterThreadTests {
 	@Test
-	public void testReceive() throws TwitterException, InterruptedException {
-		twitter.initialize();
-		twitter.receive();
-		twitter.stop();
+	public void testRun() {
+		var t = new TwitterThread();
+		t.start();
+
+		int i = 0;
+        do {    
+            try {
+				Thread.sleep(1 * 1000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+            i++;
+		}while(i < 10);
+
+		t.stopThread();
 		assertEquals(true, true);
 	}
 
