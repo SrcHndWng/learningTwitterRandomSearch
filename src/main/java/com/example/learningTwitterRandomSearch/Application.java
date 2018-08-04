@@ -26,10 +26,8 @@ public class Application {
 		var framework = "Spring Boot 2";
 		System.out.println("Application Run!");
 		System.out.println(String.format("%s %s!", greeting, framework));
+		twitter.initialize();
 		twitter.receive();
-
-		// while(true){
-		// 	System.out.println("loop");
-		// }
+		twitter.stop();
 	}
 }
