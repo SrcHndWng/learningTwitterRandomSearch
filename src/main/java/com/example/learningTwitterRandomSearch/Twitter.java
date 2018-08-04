@@ -2,13 +2,12 @@ package com.example.learningTwitterRandomSearch;
 
 import org.springframework.stereotype.Component;
 
+import twitter4j.FilterQuery;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.*;
 
@@ -35,7 +34,7 @@ public class Twitter {
         var listener = new StatusListener() {
             @Override
             public void onStatus(Status status) {
-                System.out.println("@" + status.getUser().getScreenName() + " - " + status.getText());
+                System.out.println("Get a status. " + "@" + status.getUser().getScreenName() + " - " + status.getText());
             }
 
             @Override
@@ -64,12 +63,12 @@ public class Twitter {
             }
         };
         twitterStream.addListener(listener);
-        var i = 0;
-        while(i < 100){
-            twitterStream.sample();
-            Thread.sleep(1000);
-            i++;
-        }
+        var filterQuery = new FilterQuery();
+        filterQuery.track(new String[] {String.format("@%s", TWITTER_ACCOUNT)});
+        twitterStream.filter(filterQuery);
+        System.out.println("waiting...");
+        Thread.sleep(300 * 1000L);
+        twitterStream.shutdown();
         System.out.println("-----receive end-----");
     }
 }
