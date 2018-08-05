@@ -23,7 +23,7 @@ public class TwitterThreadTests {
 				e.printStackTrace();
 			}
             i++;
-		}while(i < 10);
+		}while(i < 30);
 
 		t.stopThread();
 		assertEquals(true, true);

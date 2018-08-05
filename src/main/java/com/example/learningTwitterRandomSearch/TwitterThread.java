@@ -1,10 +1,15 @@
 package com.example.learningTwitterRandomSearch;
 
 import twitter4j.FilterQuery;
+import twitter4j.Query;
+import twitter4j.QueryResult;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.*;
@@ -17,16 +22,29 @@ public class TwitterThread extends Thread{
     final String TWITTER_ACCOUNT = System.getenv("TWITTER_ACCOUNT");
 
     private TwitterStream twitterStream;
+    private Twitter twitter;
     private boolean isActive = true;
 
     public TwitterThread(){
-        var cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-            .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
-            .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
-            .setOAuthAccessToken(TWITTER_ACCESS_TOKEN)
-            .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET);
-        twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+        twitterStream = new TwitterStreamFactory(
+            new ConfigurationBuilder()
+                .setDebugEnabled(true)
+                .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
+                .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
+                .setOAuthAccessToken(TWITTER_ACCESS_TOKEN)
+                .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET)
+                .build()
+            ).getInstance();
+
+        twitter = new TwitterFactory(
+            new ConfigurationBuilder()
+                .setDebugEnabled(true)
+                .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
+                .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
+                .setOAuthAccessToken(TWITTER_ACCESS_TOKEN)
+                .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET)
+                .build()
+            ).getInstance();
     }
     
     @Override
@@ -35,7 +53,22 @@ public class TwitterThread extends Thread{
         var listener = new StatusListener() {
             @Override
             public void onStatus(Status status) {
-                System.out.println("Get a status. " + "@" + status.getUser().getScreenName() + " - " + status.getText());
+                var screenName = status.getUser().getScreenName();
+                var text = status.getText();
+                System.out.println("Get a status. " + "@" + screenName + " - " + text);
+
+                var queryStr = text.replace("@" + screenName, "").trim();
+                System.out.println("quryStr = " + queryStr);
+                var query = new Query();
+                query.setQuery(queryStr);
+				try {
+                    var result = twitter.search(query);
+                    for (Status s : result.getTweets()) {
+                        System.out.println("Searched. @" + s.getUser().getScreenName() + ":" + s.getText() + ":" + s.getRetweetCount() + ":" + s.getFavoriteCount());
+                    }
+				} catch (TwitterException e) {
+					onException(e);
+				}
             }
 
             @Override
@@ -64,6 +97,7 @@ public class TwitterThread extends Thread{
             }
         };
         twitterStream.addListener(listener);
+        // twitterStream.sample();
         var filterQuery = new FilterQuery();
         filterQuery.track(new String[] {String.format("@%s", TWITTER_ACCOUNT)});
         twitterStream.filter(filterQuery);
