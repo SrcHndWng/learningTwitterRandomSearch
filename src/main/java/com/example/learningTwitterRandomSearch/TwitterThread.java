@@ -61,11 +61,14 @@ public class TwitterThread extends Thread{
                 System.out.println("quryStr = " + queryStr);
                 var query = new Query();
                 query.setQuery(queryStr);
+                var tweets = new Tweets();
 				try {
                     var result = twitter.search(query);
                     for (Status s : result.getTweets()) {
-                        System.out.println("Searched. @" + s.getUser().getScreenName() + ":" + s.getText() + ":" + s.getRetweetCount() + ":" + s.getFavoriteCount());
+                        tweets.add(s.getUser().getScreenName(), s.getId(), s.getFavoriteCount(), s.getRetweetCount());
                     }
+                    var selectedTweet = tweets.select();
+                    twitter.updateStatus(selectedTweet.getUrl());
 				} catch (TwitterException e) {
 					onException(e);
 				}
@@ -97,7 +100,6 @@ public class TwitterThread extends Thread{
             }
         };
         twitterStream.addListener(listener);
-        // twitterStream.sample();
         var filterQuery = new FilterQuery();
         filterQuery.track(new String[] {String.format("@%s", TWITTER_ACCOUNT)});
         twitterStream.filter(filterQuery);
