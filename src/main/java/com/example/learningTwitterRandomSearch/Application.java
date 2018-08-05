@@ -9,7 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class Application {
 
-	private TwitterThread twitterThread;
+	private TwitterThread twitterThread = null;
 
 	public static void main(String[] args) {
 		try (ConfigurableApplicationContext ctx = SpringApplication.run(Application.class, args)) {
@@ -29,10 +29,10 @@ public class Application {
 			Thread.sleep(10 * 1000L);
 		}
 	}
-
+	
 	@PreDestroy
 	public void exit() {
-		twitterThread.stopThread();
+		if(twitterThread != null) twitterThread.stopThread();
 		System.out.println("Application exit!");
 	}
 }

@@ -2,7 +2,6 @@ package com.example.learningTwitterRandomSearch;
 
 import twitter4j.FilterQuery;
 import twitter4j.Query;
-import twitter4j.QueryResult;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -68,7 +67,9 @@ public class TwitterThread extends Thread{
                         tweets.add(s.getUser().getScreenName(), s.getId(), s.getFavoriteCount(), s.getRetweetCount());
                     }
                     var selectedTweet = tweets.select();
-                    twitter.updateStatus(selectedTweet.getUrl());
+                    var selectedUrl = selectedTweet.getUrl();
+                    System.out.println("selected url = " + selectedUrl);
+                    twitter.updateStatus(selectedUrl);
 				} catch (TwitterException e) {
 					onException(e);
 				}
