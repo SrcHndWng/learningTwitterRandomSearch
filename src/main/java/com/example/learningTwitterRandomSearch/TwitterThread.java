@@ -13,7 +13,7 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.*;
 
-public class TwitterThread extends Thread{
+public class TwitterThread extends Thread {
     final String TWITTER_CONSUMER_KEY = System.getenv("TWITTER_CONSUMER_KEY");
     final String TWITTER_CONSUMER_SECRET = System.getenv("TWITTER_CONSUMER_SECRET");
     final String TWITTER_ACCESS_TOKEN = System.getenv("TWITTER_ACCESS_TOKEN");
@@ -24,30 +24,28 @@ public class TwitterThread extends Thread{
     private Twitter twitter;
     private boolean isActive = true;
 
-    public TwitterThread(){
+    public TwitterThread() {
         twitterStream = new TwitterStreamFactory(
-            new ConfigurationBuilder()
-                .setDebugEnabled(true)
-                .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
-                .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
-                .setOAuthAccessToken(TWITTER_ACCESS_TOKEN)
-                .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET)
-                .build()
-            ).getInstance();
+                new ConfigurationBuilder()
+                        .setDebugEnabled(true)
+                        .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
+                        .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
+                        .setOAuthAccessToken(TWITTER_ACCESS_TOKEN)
+                        .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET)
+                        .build()).getInstance();
 
         twitter = new TwitterFactory(
-            new ConfigurationBuilder()
-                .setDebugEnabled(true)
-                .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
-                .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
-                .setOAuthAccessToken(TWITTER_ACCESS_TOKEN)
-                .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET)
-                .build()
-            ).getInstance();
+                new ConfigurationBuilder()
+                        .setDebugEnabled(true)
+                        .setOAuthConsumerKey(TWITTER_CONSUMER_KEY)
+                        .setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET)
+                        .setOAuthAccessToken(TWITTER_ACCESS_TOKEN)
+                        .setOAuthAccessTokenSecret(TWITTER_ACCESS_TOKEN_SECRET)
+                        .build()).getInstance();
     }
-    
+
     @Override
-	public void run(){
+    public void run() {
         System.out.println("-----receive start-----");
         var listener = new StatusListener() {
             @Override
@@ -61,7 +59,7 @@ public class TwitterThread extends Thread{
                 var query = new Query();
                 query.setQuery(queryStr);
                 var tweets = new Tweets();
-				try {
+                try {
                     var result = twitter.search(query);
                     for (Status s : result.getTweets()) {
                         tweets.add(s.getUser().getScreenName(), s.getId(), s.getFavoriteCount(), s.getRetweetCount());
@@ -70,9 +68,9 @@ public class TwitterThread extends Thread{
                     var selectedUrl = selectedTweet.getUrl();
                     System.out.println("selected url = " + selectedUrl);
                     twitter.updateStatus(selectedUrl);
-				} catch (TwitterException e) {
-					onException(e);
-				}
+                } catch (TwitterException e) {
+                    onException(e);
+                }
             }
 
             @Override
@@ -102,15 +100,15 @@ public class TwitterThread extends Thread{
         };
         twitterStream.addListener(listener);
         var filterQuery = new FilterQuery();
-        filterQuery.track(new String[] {String.format("@%s", TWITTER_ACCOUNT)});
+        filterQuery.track(new String[] { String.format("@%s", TWITTER_ACCOUNT) });
         twitterStream.filter(filterQuery);
 
         System.out.println("-----waiting-----");
-        while(this.isActive) {
+        while (this.isActive) {
             // waiting...
         }
     }
-    
+
     public void stopThread() {
         System.out.println("-----receive stop-----");
         this.isActive = false;

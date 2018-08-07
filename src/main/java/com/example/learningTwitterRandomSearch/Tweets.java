@@ -5,15 +5,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
 
-public class Tweets{
+public class Tweets {
     ArrayList<SearchedTweet> tweets;
 
-    public class SearchedTweet{
+    public class SearchedTweet {
         private String screenName;
         private long id;
         private int random;
 
-        public SearchedTweet(String screenName, long id, int favoriteCount, int retweetCount){
+        public SearchedTweet(String screenName, long id, int favoriteCount, int retweetCount) {
             this.screenName = screenName;
             this.id = id;
 
@@ -21,7 +21,7 @@ public class Tweets{
             this.random = favoriteCount * retweetCount * i;
         }
 
-        public String getUrl(){
+        public String getUrl() {
             return String.format("https://twitter.com/%s/status/%s", screenName, id);
         }
     }
@@ -33,15 +33,15 @@ public class Tweets{
         }
     }
 
-    public Tweets(){
+    public Tweets() {
         tweets = new ArrayList<SearchedTweet>();
     }
 
-    public void add(String screenName, long id, int favoriteCount, int retweetCount){
-        tweets.add(new SearchedTweet(screenName, id, favoriteCount, retweetCount));   
+    public void add(String screenName, long id, int favoriteCount, int retweetCount) {
+        tweets.add(new SearchedTweet(screenName, id, favoriteCount, retweetCount));
     }
 
-    public SearchedTweet select(){
+    public SearchedTweet select() {
         Collections.sort(tweets, new SearchedTweetComp());
         Collections.reverse(tweets);
         return tweets.get(0);

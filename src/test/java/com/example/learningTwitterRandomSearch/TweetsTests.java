@@ -10,8 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TweetsTests {
-	@Test
-	public void testSelect() {
+    @Test
+    public void testSelect() {
         var tweets = new Tweets();
         tweets.add("account1", 100, 1, 2);
         tweets.add("account2", 200, 3, 4);
@@ -19,6 +19,5 @@ public class TweetsTests {
         var result = tweets.select();
         System.out.println(result);
         assertNotNull("result is null.", result);
-	}
-
+    }
 }
